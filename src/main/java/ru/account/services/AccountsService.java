@@ -22,6 +22,10 @@ public class AccountsService {
         return accountsRepository.getAccounts(PageRequest.of(offset, limit));
     }
 
+    public List<Account> getAccountsBySearchText(String text, Integer offset, Integer limit){
+        return accountsRepository.getAccountsBySearchText(text, PageRequest.of(offset, limit));
+    }
+
     public Optional<Account> getAccountById(Long id){
         return accountsRepository.findById(id);
     }

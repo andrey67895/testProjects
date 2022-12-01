@@ -13,6 +13,8 @@ import ru.account.models.Account;
 import ru.account.models.ErrorModel;
 import ru.account.services.AccountsService;
 
+import java.util.Objects;
+
 @RequiredArgsConstructor
 @RestController
 @Log4j2
@@ -25,9 +27,14 @@ public class AccountsController {
     @GetMapping("/accounts")
     public ResponseEntity<Object> getAccounts(
             @RequestParam(value = "offset", required = false, defaultValue = "0") Integer offset,
-            @RequestParam(value = "limit", required = false, defaultValue = "20") Integer limit
-    ) {
-        return ResponseEntity.ok().body(accountsService.getAccounts(offset, limit));
+            @RequestParam(value = "limit", required = false, defaultValue = "20") Integer limit,
+            @RequestParam(value = "searchText", required = false) String searchText
+            ) {
+        if (Objects.nonNull(searchText)) {
+            return ResponseEntity.ok().body(accountsService.getAccountsBySearchText(searchText, offset, limit));
+        } else {
+            return ResponseEntity.ok().body(accountsService.getAccounts(offset, limit));
+        }
     }
 
     @ApiResponse(responseCode = "200")

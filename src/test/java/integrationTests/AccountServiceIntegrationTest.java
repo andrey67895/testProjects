@@ -16,9 +16,6 @@ import ru.account.Application;
 import ru.account.models.Account;
 import ru.account.services.AccountsService;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 
 @Testcontainers
 @SpringBootTest(classes = Application.class)
@@ -27,8 +24,6 @@ public class AccountServiceIntegrationTest {
 
     @Autowired
     private AccountsService accountsService;
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Container
     private static final PostgreSQLContainer postgreSQLContainer = new PostgreSQLContainer("postgres:12")

@@ -2,6 +2,7 @@ package ru.account.config;
 
 import javax.sql.DataSource;
 
+import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,7 +27,8 @@ public class SqlConfiguration {
         dataSource.setUrl(url);
         dataSource.setUsername(user);
         dataSource.setPassword(password);
-
+        Flyway flyway = Flyway.configure().dataSource(dataSource).load();
+        flyway.migrate();
        return dataSource;
     }
 }

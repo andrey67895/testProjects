@@ -8,4 +8,4 @@ RUN mkdir -p /build/logs
 WORKDIR /build
 COPY pom.xml /build
 #Download all required dependencies into one layer
-RUN mvn dependency:resolve && mvn compile
+RUN mvn dependency:resolve && mvn clean compile
