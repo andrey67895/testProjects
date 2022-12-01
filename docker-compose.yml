@@ -1,0 +1,53 @@
+version: "3.7"
+services:
+  grafana:
+    image: grafana/grafana-enterprise:8.2.0
+    ports:
+      - 3000:3000
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    networks:
+      monitoring:
+        aliases:
+          - grafana
+  prometheus:
+      image: prom/prometheus
+      ports:
+        - 9090:9090
+      volumes:
+        - ./src/main/resources/prometheus.yml:/etc/prometheus/prometheus.yml
+        - ./prometheus:/prometheus
+      networks:
+        monitoring:
+          aliases:
+            - prometheus
+  spring_dev:
+    build:
+      context: TestApp
+    image: maven/builder:0.0.1
+    container_name: spring_container_api
+    ports:
+      - "8080:8080"
+    volumes:
+      - "./src:/build/src"
+      - "./target:/build/target:cached"
+    environment:
+      - "SPRING_PROFILES_ACTIVE=docker"
+    command: "mvn spring-boot:run"
+    depends_on:
+      - spring_dev_db
+  spring_dev_db:
+    container_name: spring_dev_db
+    image: "postgres:12"
+    ports:
+      - "5434:5432"
+    volumes:
+      - spring_dev_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=docker
+      - POSTGRES_PASSWORD=docker
+volumes:
+  spring_dev_data: {}
+networks:
+  monitoring:
