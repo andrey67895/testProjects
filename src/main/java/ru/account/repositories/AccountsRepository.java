@@ -13,6 +13,6 @@ public interface AccountsRepository extends JpaRepository<Account, Long> {
     @Query(value = "SELECT * FROM account", nativeQuery = true)
     List<Account> getAccounts(Pageable pageable);
 
-    @Query(value = "SELECT * FROM account WHERE first_name like '%:text%' OR second_name like '%:text%' ", nativeQuery = true)
+    @Query(value = "SELECT * FROM account WHERE first_name like '%:text%' OR last_name like '%:text%' ", nativeQuery = true)
     List<Account> getAccountsBySearchText(@Param("text") String text, Pageable pageable);
 }

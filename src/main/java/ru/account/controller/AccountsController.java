@@ -3,6 +3,7 @@ package ru.account.controller;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import ru.account.models.ErrorModel;
 import ru.account.services.AccountsService;
 
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 @RequiredArgsConstructor
 @RestController
@@ -22,7 +24,7 @@ public class AccountsController {
     @Autowired
     private AccountsService accountsService;
 
-
+    @SneakyThrows
     @ApiResponse(responseCode = "200")
     @GetMapping("/accounts")
     public ResponseEntity<Object> getAccounts(
@@ -40,10 +42,15 @@ public class AccountsController {
     @ApiResponse(responseCode = "200")
     @GetMapping("/accounts/{id}")
     public ResponseEntity<Object> getAccountsById(
-            @PathVariable(value = "id") Long id
+            @PathVariable(value = "id") String id
     ) {
+        if (id.isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorModel(HttpStatus.BAD_REQUEST.value(), "Некорректное значение: id равен пустой строке"));
+        }
         try {
-            Account account = accountsService.getAccountById(id).orElse(null);
+            Account account = accountsService.getAccountById(Long.parseLong(id)).orElse(null);
             if (account != null) {
                 return ResponseEntity.ok().body(accountsService.saveAccount(account));
             } else {
